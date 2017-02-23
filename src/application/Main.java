@@ -34,6 +34,7 @@ public class Main extends Application {
 		
 		fileChooser = new FileChooser();
 		
+		player = new Player("file:///Users/johnhan/Downloads/Gakki.mp4");
 		open.setOnAction(new EventHandler<ActionEvent >(){
 
 			@Override
@@ -44,6 +45,7 @@ public class Main extends Application {
 				if(file != null){
 					try {
 						player = new Player(file.toURI().toURL().toExternalForm());
+						setUpScene(primaryStage);
 					} catch (MalformedURLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -52,9 +54,13 @@ public class Main extends Application {
 			}
 			
 		});
-		
-		player = new Player("file:///Users/johnhan/Downloads/Gakki.mp4");
 		player.setTop(menu);
+		setUpScene(primaryStage);
+		primaryStage.show();
+		
+	}
+	
+	public void setUpScene(Stage primaryStage) {
 		Scene scene = new Scene(player, 720, 480);
 		primaryStage.setScene(scene);
 		player.player.setOnReady(new Runnable(){
@@ -63,15 +69,13 @@ public class Main extends Application {
 			public void run() {
 				// TODO Auto-generated method stub
 				int w = player.player.getMedia().getWidth();
-				int h = player.player.getMedia().getHeight();
+				int h = player.player.getMedia().getHeight()+20;
 				
 				primaryStage.setHeight(h);
 				primaryStage.setWidth(w);
 			}
-			
-		});
-		primaryStage.show();
-		
+	
+		});		
 	}
 	
 	public static void main(String[] args) {

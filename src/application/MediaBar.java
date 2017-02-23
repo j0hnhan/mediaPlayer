@@ -20,6 +20,8 @@ public class MediaBar extends HBox{
 	Slider time = new Slider();
 	Slider vol = new Slider();
 	
+	Label timeLabel = new Label("00:00/00:00");
+	
 	Button playButton = new Button("||");
 	Label volume = new Label("Volume: ");
 	
@@ -32,6 +34,9 @@ public class MediaBar extends HBox{
 		setAlignment(Pos.CENTER);
 		setPadding(new Insets(5,10,5,10));
 		
+		timeLabel.setPrefWidth(100);
+		timeLabel.setMinWidth(50);
+		
 		vol.setPrefWidth(70);
 		vol.setMinWidth(30);
 		vol.setValue(100);
@@ -42,6 +47,7 @@ public class MediaBar extends HBox{
 		
 		getChildren().add(playButton);
 		getChildren().add(time);
+		getChildren().add(timeLabel);
 		getChildren().add(volume);
 		getChildren().add(vol);
 		
@@ -77,6 +83,7 @@ public class MediaBar extends HBox{
 			public void invalidated(Observable observable) {
 				// TODO Auto-generated method stub
 				updateValue();
+				updateTimeLabel();
 			}
 			
 		});
@@ -111,6 +118,43 @@ public class MediaBar extends HBox{
 		Platform.runLater(new Runnable() {
 			public void run() {
 				time.setValue(player.getCurrentTime().toMillis()/player.getTotalDuration().toMillis()*100);
+			}
+		});
+	}
+	
+	public void updateTimeLabel(){
+		Platform.runLater(new Runnable(){
+			public void run(){
+				StringBuilder totalTime = new StringBuilder();
+				int totalMinute = (int) Math.round(player.getTotalDuration().toSeconds()/60);
+				int totalSecond = (int) Math.round(player.getTotalDuration().toSeconds()%60);
+				if(totalMinute<10){
+					totalTime.append(0).append(totalMinute);
+				}else{
+					totalTime.append(totalMinute);
+				}
+				totalTime.append(":");
+				if(totalSecond<10){
+					totalTime.append(0).append(totalSecond);
+				}else{
+					totalTime.append(totalSecond);
+				}				
+				StringBuilder currentTime = new StringBuilder();
+				int currentMinute = (int) Math.round(player.getCurrentTime().toSeconds()/60);
+				int currentSeconds = (int) Math.round(player.getCurrentTime().toSeconds()%60);
+				if(currentMinute<10){
+					currentTime.append(0).append(currentMinute);
+				}else{
+					currentTime.append(currentMinute);
+				}
+				currentTime.append(":");
+				if(currentSeconds<10){
+					currentTime.append(0).append(currentSeconds);
+				}else{
+					currentTime.append(currentSeconds);
+				}					
+				currentTime.append("/").append(totalTime);
+				timeLabel.setText(currentTime.toString());
 			}
 		});
 	}
