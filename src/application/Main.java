@@ -2,6 +2,8 @@ package application;
 	
 import java.io.File;
 import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.sun.prism.paint.Color;
 
@@ -33,19 +35,23 @@ public class Main extends Application {
 		menu.getMenus().add(file); 
 		
 		fileChooser = new FileChooser();
-		
-		player = new Player("file:///Users/johnhan/Downloads/Gakki.mp4");
-		open.setOnAction(new EventHandler<ActionEvent >(){
+
+//		player = new Player("file:///Users/johnhan/Downloads/Gakki.mp4");
+		player = new Player("");
+		open.setOnAction(new EventHandler<ActionEvent>(){
 
 			@Override
 			public void handle(ActionEvent event) {
 				// TODO Auto-generated method stub
-				player.player.pause();
+				if(player.player != null){
+					player.player.pause();
+				}
 				File file = fileChooser.showOpenDialog(primaryStage);
 				if(file != null){
 					try {
 						player = new Player(file.toURI().toURL().toExternalForm());
 						setUpScene(primaryStage);
+						player.setTop(menu);
 					} catch (MalformedURLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -63,19 +69,22 @@ public class Main extends Application {
 	public void setUpScene(Stage primaryStage) {
 		Scene scene = new Scene(player, 720, 480);
 		primaryStage.setScene(scene);
-		player.player.setOnReady(new Runnable(){
+		if(player.player != null){
+			player.player.setOnReady(new Runnable(){
 
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				int w = player.player.getMedia().getWidth();
-				int h = player.player.getMedia().getHeight()+20;
-				
-				primaryStage.setHeight(h);
-				primaryStage.setWidth(w);
-			}
-	
-		});		
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					int w = player.player.getMedia().getWidth();
+					int h = player.player.getMedia().getHeight();
+					primaryStage.setHeight(h==0? 480:h+20);
+					primaryStage.setWidth(w==0?720:w);
+				}
+
+			});	
+			Path p = Paths.get(player.player.getMedia().getSource());
+			primaryStage.setTitle(p.getFileName().toString());
+		}
 	}
 	
 	public static void main(String[] args) {
