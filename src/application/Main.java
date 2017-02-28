@@ -2,6 +2,7 @@ package application;
 	
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -12,12 +13,15 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.media.MediaPlayer.Status;
+import javafx.scene.media.SubtitleTrack;
+import javafx.scene.web.WebView;
 
 
 public class Main extends Application {
@@ -34,6 +38,8 @@ public class Main extends Application {
 		
 		MenuItem play = new MenuItem("Play");
 		MenuItem pause = new MenuItem("Pause");
+		MenuItem ff = new MenuItem("Fast Forword");
+		MenuItem rewind = new MenuItem("Rewind");
 		MenuItem fullScreen = new MenuItem("Full Screen");
 		Menu control = new Menu("Control");
 		
@@ -43,6 +49,8 @@ public class Main extends Application {
 		file.getItems().add(close);
 		control.getItems().add(play);
 		control.getItems().add(pause);
+		control.getItems().add(ff);
+		control.getItems().add(rewind);
 		control.getItems().add(fullScreen);
 		menu.getMenus().add(file); 
 		menu.getMenus().add(control);
@@ -115,6 +123,41 @@ public class Main extends Application {
 			
 		});
 		
+		ff.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				// TODO Auto-generated method stub
+				if(player.player != null){
+					Duration newTime = new Duration(player.player.getCurrentTime().toMillis()+1500);
+					if(newTime.greaterThanOrEqualTo(player.player.getTotalDuration())){
+						player.player.seek(player.player.getTotalDuration());
+					}else{
+						player.player.seek(newTime);
+					}
+						
+				}
+			}
+			
+		});
+		
+		rewind.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				// TODO Auto-generated method stub
+				if(player.player != null){
+					Duration newTime = new Duration(player.player.getCurrentTime().toMillis()-1500);
+					if(newTime.lessThanOrEqualTo(player.player.getStartTime())){
+						player.player.seek(player.player.getStartTime());
+					}else{
+						player.player.seek(newTime);
+					}
+				}
+			}
+			
+		});
+		
 		fullScreen.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -129,7 +172,6 @@ public class Main extends Application {
 			}
 			
 		});
-		
 		
 		player.setTop(menu);
 		setUpScene(primaryStage);
