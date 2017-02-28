@@ -17,6 +17,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.media.MediaPlayer.Status;
 
 
 public class Main extends Application {
@@ -28,16 +29,29 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		
 		MenuItem open = new MenuItem("Open");
+		MenuItem close = new MenuItem("Close");
 		Menu file = new Menu("File");
+		
+		MenuItem play = new MenuItem("Play");
+		MenuItem pause = new MenuItem("Pause");
+		MenuItem fullScreen = new MenuItem("Full Screen");
+		Menu control = new Menu("Control");
+		
 		MenuBar menu = new MenuBar(); 
 		
 		file.getItems().add(open);
+		file.getItems().add(close);
+		control.getItems().add(play);
+		control.getItems().add(pause);
+		control.getItems().add(fullScreen);
 		menu.getMenus().add(file); 
+		menu.getMenus().add(control);
 		
 		fileChooser = new FileChooser();
 
 //		player = new Player("file:///Users/johnhan/Downloads/Gakki.mp4");
 		player = new Player("");
+		
 		open.setOnAction(new EventHandler<ActionEvent>(){
 
 			@Override
@@ -60,6 +74,63 @@ public class Main extends Application {
 			}
 			
 		});
+		
+		close.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				// TODO Auto-generated method stub
+				primaryStage.close();
+			}
+			
+		});
+		
+		play.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				// TODO Auto-generated method stub
+				if(player.player != null){
+					Status status = player.player.getStatus();
+					if(status == Status.PAUSED || status == Status.HALTED || status == Status.STOPPED) {
+						player.player.play();
+					}
+				}				
+			}
+			
+		});
+		
+		pause.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				// TODO Auto-generated method stub
+				if(player.player != null){
+					Status status = player.player.getStatus();
+					if(status == Status.PLAYING) {
+						player.player.pause();
+					}
+				}				
+			}
+			
+		});
+		
+		fullScreen.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				// TODO Auto-generated method stub
+				if(!primaryStage.isFullScreen()){
+					primaryStage.setFullScreen(true);
+				}else{
+					primaryStage.setFullScreen(false);
+				}
+				
+			}
+			
+		});
+		
+		
 		player.setTop(menu);
 		setUpScene(primaryStage);
 		primaryStage.show();

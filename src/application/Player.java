@@ -1,5 +1,8 @@
 package application;
 
+import java.io.File;
+import java.net.MalformedURLException;
+
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
@@ -52,7 +55,15 @@ public class Player extends BorderPane{
 	}
 	
 	public void setupBackground() {
-		BackgroundImage myBI= new BackgroundImage(new Image("file:///Users/johnhan/Documents/Code/workspace/Player/src/image/background.jpg",360,240,false,true),
+		File bgImage = new File("background.jpg");
+		String imageURL = "";
+		try {
+			imageURL = bgImage.toURI().toURL().toString();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		BackgroundImage myBI= new BackgroundImage(new Image(imageURL,360,240,false,true),
 		        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
 		          BackgroundSize.DEFAULT);
 		//then you set to your node

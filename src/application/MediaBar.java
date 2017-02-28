@@ -45,6 +45,7 @@ public class MediaBar extends HBox{
 		
 		playButton.setPrefWidth(30);
 		
+		
 		getChildren().add(playButton);
 		getChildren().add(time);
 		getChildren().add(timeLabel);
