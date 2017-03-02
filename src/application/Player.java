@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
@@ -55,7 +56,7 @@ public class Player extends BorderPane{
 	}
 	
 	public void setupBackground() {
-		File bgImage = new File("background.jpg");
+		File bgImage = new File("music.png");
 		String imageURL = "";
 		try {
 			imageURL = bgImage.toURI().toURL().toString();
@@ -63,7 +64,7 @@ public class Player extends BorderPane{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		BackgroundImage myBI= new BackgroundImage(new Image(imageURL,360,240,false,true),
+		BackgroundImage myBI= new BackgroundImage(new Image(imageURL,256,256,false,true),
 		        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER,
 		          BackgroundSize.DEFAULT);
 		//then you set to your node

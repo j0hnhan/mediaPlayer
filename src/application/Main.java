@@ -18,6 +18,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.media.MediaPlayer.Status;
 import javafx.scene.media.SubtitleTrack;
@@ -38,6 +44,7 @@ public class Main extends Application {
 		
 		MenuItem play = new MenuItem("Play");
 		MenuItem pause = new MenuItem("Pause");
+		MenuItem stop = new MenuItem("Stop");
 		MenuItem ff = new MenuItem("Fast Forword");
 		MenuItem rewind = new MenuItem("Rewind");
 		MenuItem fullScreen = new MenuItem("Full Screen");
@@ -49,6 +56,7 @@ public class Main extends Application {
 		file.getItems().add(close);
 		control.getItems().add(play);
 		control.getItems().add(pause);
+		control.getItems().add(stop);
 		control.getItems().add(ff);
 		control.getItems().add(rewind);
 		control.getItems().add(fullScreen);
@@ -123,6 +131,24 @@ public class Main extends Application {
 			
 		});
 		
+		
+		stop.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				// TODO Auto-generated method stub
+				if(player.player != null){
+					player.player.stop();
+					player = new Player("");
+					setUpScene(primaryStage);
+					player.setTop(menu);
+					primaryStage.setHeight(480);
+					primaryStage.setWidth(720);
+					primaryStage.setTitle("Media Player");
+				}
+			}
+		});
+		
 		ff.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
@@ -173,8 +199,8 @@ public class Main extends Application {
 			
 		});
 		
-		player.setTop(menu);
 		setUpScene(primaryStage);
+		player.setTop(menu);
 		primaryStage.show();
 		
 	}
@@ -182,6 +208,7 @@ public class Main extends Application {
 	public void setUpScene(Stage primaryStage) {
 		Scene scene = new Scene(player, 720, 480);
 		primaryStage.setScene(scene);
+		setupDrag(scene);
 		if(player.player != null){
 			player.player.setOnReady(new Runnable(){
 
@@ -198,6 +225,71 @@ public class Main extends Application {
 			Path p = Paths.get(player.player.getMedia().getSource());
 			primaryStage.setTitle(p.getFileName().toString());
 		}
+	}
+	
+	
+	public void setupDrag(Scene scene) {
+		scene.setOnDragOver((dragEvent) -> {
+            Dragboard db = dragEvent.getDragboard();
+            if (db.hasFiles()) {
+                dragEvent.acceptTransferModes(TransferMode.COPY);
+            } else {
+                dragEvent.consume();
+            }
+        });
+		
+		scene.setOnDragDropped((dragEvent) -> {
+			Dragboard db = dragEvent.getDragboard();
+			if (db.hasFiles()) {
+				try {
+					if (player.player != null)
+						player.player.stop();
+					player = new Player(db.getFiles().get(0).toURI().toURL().toExternalForm());
+					scene.setRoot(player);
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		scene.addEventFilter(MouseEvent.MOUSE_PRESSED, (mouseEvent) -> {
+			if (mouseEvent.getButton().equals(
+                    MouseButton.PRIMARY)) {
+                if (mouseEvent.getClickCount() == 2) {
+                    if (((Stage)scene.getWindow()).isFullScreen()) {
+                        ((Stage)scene.getWindow()).setFullScreen(false);
+                    } else {
+                        ((Stage)scene.getWindow()).setFullScreen(true);
+                    }
+                }
+            }
+		});
+		
+		
+		scene.addEventFilter(KeyEvent.KEY_PRESSED, (keyEvent) -> {
+			if (keyEvent.getCode() == KeyCode.SPACE) {
+				if(player.player != null)
+					if(player.player.getStatus() == Status.PAUSED){
+						player.player.play();
+					}else if(player.player.getStatus() == Status.PLAYING){
+						player.player.pause();
+					}
+			}
+		});
+		
+		scene.addEventFilter(KeyEvent.KEY_PRESSED, (keyEvent) -> {
+			if (keyEvent.getCode() == KeyCode.LEFT) {
+				//  rewind
+			}
+		});
+
+		scene.addEventFilter(KeyEvent.KEY_PRESSED, (keyEvent) -> {
+			if (keyEvent.getCode() == KeyCode.RIGHT) {
+				//  ff
+			}
+		});
+		
 	}
 	
 	public static void main(String[] args) {
