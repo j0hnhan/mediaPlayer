@@ -25,6 +25,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
 import javafx.scene.media.SubtitleTrack;
 import javafx.scene.web.WebView;
@@ -34,6 +35,7 @@ public class Main extends Application {
 	
 	Player player;
 	FileChooser fileChooser;
+	MenuBar menu;
 	
 	@Override
 	public void start(Stage primaryStage) {
@@ -50,7 +52,7 @@ public class Main extends Application {
 		MenuItem fullScreen = new MenuItem("Full Screen");
 		Menu control = new Menu("Control");
 		
-		MenuBar menu = new MenuBar(); 
+		menu = new MenuBar(); 
 		
 		file.getItems().add(open);
 		file.getItems().add(close);
@@ -155,13 +157,7 @@ public class Main extends Application {
 			public void handle(ActionEvent event) {
 				// TODO Auto-generated method stub
 				if(player.player != null){
-					Duration newTime = new Duration(player.player.getCurrentTime().toMillis()+1500);
-					if(newTime.greaterThanOrEqualTo(player.player.getTotalDuration())){
-						player.player.seek(player.player.getTotalDuration());
-					}else{
-						player.player.seek(newTime);
-					}
-						
+					fastforward(player.player);
 				}
 			}
 			
@@ -173,12 +169,7 @@ public class Main extends Application {
 			public void handle(ActionEvent event) {
 				// TODO Auto-generated method stub
 				if(player.player != null){
-					Duration newTime = new Duration(player.player.getCurrentTime().toMillis()-1500);
-					if(newTime.lessThanOrEqualTo(player.player.getStartTime())){
-						player.player.seek(player.player.getStartTime());
-					}else{
-						player.player.seek(newTime);
-					}
+					rewind(player.player);
 				}
 			}
 			
@@ -246,6 +237,7 @@ public class Main extends Application {
 						player.player.stop();
 					player = new Player(db.getFiles().get(0).toURI().toURL().toExternalForm());
 					scene.setRoot(player);
+					player.setTop(menu);
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -281,15 +273,40 @@ public class Main extends Application {
 		scene.addEventFilter(KeyEvent.KEY_PRESSED, (keyEvent) -> {
 			if (keyEvent.getCode() == KeyCode.LEFT) {
 				//  rewind
+				if(player.player != null) {
+					rewind(player.player);
+				}
 			}
 		});
 
 		scene.addEventFilter(KeyEvent.KEY_PRESSED, (keyEvent) -> {
 			if (keyEvent.getCode() == KeyCode.RIGHT) {
 				//  ff
+				if(player.player != null) {
+					fastforward(player.player);
+				}
 			}
 		});
 		
+	}
+	
+	
+	public void rewind(MediaPlayer player){
+		Duration newTime = new Duration(player.getCurrentTime().toMillis()-15000);
+		if(newTime.lessThanOrEqualTo(player.getStartTime())){
+			player.seek(player.getStartTime());
+		}else{
+			player.seek(newTime);
+		}
+	}
+	
+	public void fastforward(MediaPlayer player){
+		Duration newTime = new Duration(player.getCurrentTime().toMillis()+15000);
+		if(newTime.greaterThanOrEqualTo(player.getTotalDuration())){
+			player.seek(player.getTotalDuration());
+		}else{
+			player.seek(newTime);
+		}
 	}
 	
 	public static void main(String[] args) {
