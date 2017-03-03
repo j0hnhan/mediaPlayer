@@ -14,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
+import javafx.util.Duration;
 
 public class MediaBar extends HBox{
 	
@@ -21,8 +22,9 @@ public class MediaBar extends HBox{
 	Slider vol = new Slider();
 	
 	Label timeLabel = new Label("00:00/00:00");
-	
+	Button rewindButtton = new Button("R");
 	Button playButton = new Button("||");
+	Button ffButton = new Button("F");
 	Label volume = new Label("Volume: ");
 	
 	MediaPlayer player;
@@ -37,19 +39,41 @@ public class MediaBar extends HBox{
 		timeLabel.setPrefWidth(100);
 		timeLabel.setMinWidth(50);
 		
-		vol.setPrefWidth(70);
+		
+		vol.setPrefWidth(50);
 		vol.setMinWidth(30);
 		vol.setValue(100);
 		
 		HBox.setHgrow(time, Priority.ALWAYS);
 		
-		playButton.setPrefWidth(30);
 		
+		rewindButtton.setPrefWidth(30);
+		playButton.setPrefWidth(30);
+		ffButton.setPrefWidth(30);
+		
+		
+		getChildren().add(rewindButtton);
 		getChildren().add(playButton);
+		getChildren().add(ffButton);
 		getChildren().add(time);
 		getChildren().add(timeLabel);
 		getChildren().add(volume);
 		getChildren().add(vol);
+		
+		rewindButtton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				// TODO Auto-generated method stub
+				Duration newTime = new Duration(player.getCurrentTime().toMillis()-1500);
+				if(newTime.lessThanOrEqualTo(player.getStartTime())){
+					player.seek(player.getStartTime());
+				}else{
+					player.seek(newTime);
+				}
+			}
+			
+		});
 		
 		playButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -75,6 +99,22 @@ public class MediaBar extends HBox{
 			}
 			
 		});
+		
+		ffButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				// TODO Auto-generated method stub
+				Duration newTime = new Duration(player.getCurrentTime().toMillis()+1500);
+				if(newTime.greaterThanOrEqualTo(player.getTotalDuration())){
+					player.seek(player.getTotalDuration());
+				}else{
+					player.seek(newTime);
+				}	
+			}
+			
+		});
+		
 		
 		
 		player.currentTimeProperty().addListener(new InvalidationListener() {
