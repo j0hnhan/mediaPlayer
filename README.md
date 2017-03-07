@@ -10,7 +10,7 @@ A fully-functioning media player which can play videos and musics.
 
 
 Player:
-[player]
+![alt text][player]
 [player]: https://github.com/j0hnhan/mediaPlayer/blob/master/pictures/player1.jpg "Player initial state"
 
 When playing vedio:
