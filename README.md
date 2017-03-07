@@ -9,14 +9,14 @@ A fully-functioning media player which can play videos and musics.
    left key for rewind and so on.
 
 
-Player:
-[alt text][player]
+Player:  
+![alt text][player]
 [player]: https://github.com/j0hnhan/mediaPlayer/blob/master/pictures/player1.jpg "Player initial state"
 
-When playing vedio:
-[vedio]
+When playing vedio:  
+![alt text][vedio]
 [vedio]: https://github.com/j0hnhan/mediaPlayer/blob/master/pictures/player2.jpg "when playing vedio"
 
-When playing music:
-[music]
+When playing music:  
+![alt text][music]
 [music]: https://github.com/j0hnhan/mediaPlayer/blob/master/pictures/player3.jpg "when playing music"
