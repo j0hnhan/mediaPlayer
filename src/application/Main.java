@@ -199,17 +199,14 @@ public class Main extends Application {
 	public void setUpScene(Stage primaryStage) {
 		Scene scene = new Scene(player, 720, 480);
 		primaryStage.setScene(scene);
-		setupDrag(scene);
+		setupDrag(scene,primaryStage);
 		if(player.player != null){
 			player.player.setOnReady(new Runnable(){
 
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-					int w = player.player.getMedia().getWidth();
-					int h = player.player.getMedia().getHeight();
-					primaryStage.setHeight(h==0? 480:h+20);
-					primaryStage.setWidth(w==0?720:w);
+					setWindowSize(player.player, primaryStage);
 				}
 
 			});	
@@ -219,7 +216,7 @@ public class Main extends Application {
 	}
 	
 	
-	public void setupDrag(Scene scene) {
+	public void setupDrag(Scene scene, Stage stage) {
 		scene.setOnDragOver((dragEvent) -> {
             Dragboard db = dragEvent.getDragboard();
             if (db.hasFiles()) {
@@ -238,6 +235,17 @@ public class Main extends Application {
 					player = new Player(db.getFiles().get(0).toURI().toURL().toExternalForm());
 					scene.setRoot(player);
 					player.setTop(menu);
+					player.player.setOnReady(new Runnable(){
+
+						@Override
+						public void run() {
+							// TODO Auto-generated method stub
+							setWindowSize(player.player, stage);
+						}
+						
+					});
+					Path p = Paths.get(player.player.getMedia().getSource());
+					stage.setTitle(p.getFileName().toString());
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -307,6 +315,13 @@ public class Main extends Application {
 		}else{
 			player.seek(newTime);
 		}
+	}
+	
+	public void setWindowSize(MediaPlayer player, Stage stage){
+		int w = player.getMedia().getWidth();
+		int h = player.getMedia().getHeight();
+		stage.setHeight(h==0? 480:h+20);
+		stage.setWidth(w==0?720:w);
 	}
 	
 	public static void main(String[] args) {
